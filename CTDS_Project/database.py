@@ -10,17 +10,23 @@ class Database:
     def create_table(self):
         try:
             self.c.execute('CREATE TABLE articles(name TEXT PRIMARY KEY, signature BLOB)')
+            self.con.commit()
         except sql.OperationalError:
             pass
 
     def add_article(self, article, signature):
-        pass
+        self.c.execute('INSERT INTO articles VALUES("{}","{}")'.format(article, str(signature)))
+        self.con.commit()
 
-    def get_article(self, article):
-        pass
+    def get_signature(self, article):
+        self.c.execute('SELECT signature FROM articles WHERE name = "{}"'.format(article))
+        return list(map(int, self.c.fetchone()[0][1:-1].split(', ')))
 
     def close(self):
         self.con.close()
 
 db = Database()
+# db.add_article('Test', [1,2,3,4,5])
+signature = db.get_signature('Test')
+print(signature)
 db.close()
