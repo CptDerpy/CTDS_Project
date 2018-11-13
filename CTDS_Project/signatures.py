@@ -20,8 +20,9 @@ class Signatures:
         return val 
     
     def shingles (self):
-        #document = document.replace('.','').replace(',','').replace('\n','').replace(':','').replace(';','').replace('_','').replace('-','')
-        d = self.filetext.split(" ")
+        document = self.filetext
+        document = document.replace('.','').replace(',','').replace('\n','').replace(':','').replace(';','').replace('_','').replace('-','')
+        d = document.split(" ")
         shingles = [d[i:i+self.q] for i in range(len(d)-self.q)]
         
         return shingles
