@@ -25,11 +25,24 @@ class Database:
         self.c.execute('SELECT value FROM articles WHERE name = "{}"'.format(article))
         return self.c.fetchall()
 
+    def get_all_signatures(self):
+        self.c.execute('SELECT name FROM articles GROUP BY name')
+        names = self.c.fetchall()
+        return {name: self.get_signature(name) for name in names}
+
+    # Drop article table
+    def purge(self):
+        self.c.execute('DROP TABLE articles')
+        self.con.commit()
+
     def close(self):
         self.con.close()
 
 db = Database()
-db.add_article('Test', [1,2,3,4,5])
-signature = db.get_signature('Test')
-print(signature)
+# db.add_article('Test', [1,2,3,4,5])
+# db.add_article('Scoop', [6,7,8,9,10])
+# db.add_article('Poop', [11,12,13,14,15])
+# signature = db.get_signature('Test')
+signatures = db.get_all_signatures()
+print(signatures)
 db.close()
