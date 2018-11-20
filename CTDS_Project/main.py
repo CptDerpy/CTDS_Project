@@ -15,7 +15,7 @@ if __name__ == "__main__":
     print('Similarity to article:')
     for name, sig in db_sigs.items():
         sim = jaccard(test_sig, sig)
-        if sim > 0:
+        if sim >= 0.01:
             print('{:<45}: {:.2f}'.format(name, sim))
 
     db.close()

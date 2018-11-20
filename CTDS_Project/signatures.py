@@ -10,7 +10,7 @@ class Signatures:
     
     def __init__(self, filename):
         self.q = 3
-        self.k = 100
+        self.k = 1000
         self.filename = filename
         self.filetext = self.loadFile(filename)
 
