@@ -56,6 +56,6 @@ class Database:
 
 if __name__=='__main__':
     db = Database()
-    # db.populate_table()
-    signatures = db.get_all_signatures()
+    db.populate_table()
+    # signatures = db.get_all_signatures()
     db.close()

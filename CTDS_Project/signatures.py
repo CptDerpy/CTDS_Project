@@ -1,5 +1,9 @@
 import mmh3
 
+def jaccard(sig1, sig2):
+    pass
+
+
 class Signatures:
     
     def __init__(self, filename):
