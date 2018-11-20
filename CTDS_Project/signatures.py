@@ -1,7 +1,9 @@
 import mmh3
 
 def jaccard(sig1, sig2):
-    pass
+    S = set(sig1)
+    T = set(sig2)
+    return len(S & T) / len(S | T)
 
 
 class Signatures:
