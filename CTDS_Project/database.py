@@ -1,4 +1,7 @@
 import sqlite3 as sql
+import os
+from signatures import * # pylint: disable=W0614
+
 
 class Database:
 
@@ -21,6 +24,17 @@ class Database:
             self.c.execute('INSERT INTO articles VALUES("{}",{})'.format(article, value))
         self.con.commit()
 
+    def populate_table(self):
+        self.purge()
+        path = os.path.dirname(os.path.abspath(__file__))
+        data_path = os.path.join(path, 'Wikipages')
+        files = os.listdir(data_path)
+        for file in files:
+            f = os.path.join(data_path, file)
+            sig = Signatures(f).getSignatures()
+            print('Adding', file, 'to database')
+            self.add_article(file, sig)
+
     def get_signature(self, article):
         self.c.execute('SELECT value FROM articles WHERE name = "{}"'.format(article))
         return self.c.fetchall()
@@ -34,15 +48,14 @@ class Database:
     def purge(self):
         self.c.execute('DROP TABLE articles')
         self.con.commit()
+        self.__init__()
 
     def close(self):
         self.con.close()
 
-db = Database()
-# db.add_article('Test', [1,2,3,4,5])
-# db.add_article('Scoop', [6,7,8,9,10])
-# db.add_article('Poop', [11,12,13,14,15])
-# signature = db.get_signature('Test')
-signatures = db.get_all_signatures()
-print(signatures)
-db.close()
+
+if __name__=='__main__':
+    db = Database()
+    # db.populate_table()
+    signatures = db.get_all_signatures()
+    db.close()

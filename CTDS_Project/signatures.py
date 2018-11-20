@@ -9,7 +9,7 @@ class Signatures:
         self.filetext = self.loadFile(filename)
 
     def loadFile(self, filename):
-        file = open(filename)
+        file = open(filename, encoding="utf8")
         return file.read()
     
   
