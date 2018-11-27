@@ -1,6 +1,6 @@
 import sqlite3 as sql
 import os
-from signatures import * # pylint: disable=W0614
+from fingerprint import * # pylint: disable=W0614
 
 
 class Database:
@@ -31,7 +31,7 @@ class Database:
         files = os.listdir(data_path)
         for file in files:
             f = os.path.join(data_path, file)
-            sig = Signatures(f).getSignatures()
+            sig = Fingerprint(f).getSignatures()
             print('Adding', file, 'to database')
             self.add_article(file, sig)
 
@@ -57,5 +57,4 @@ class Database:
 if __name__=='__main__':
     db = Database()
     db.populate_table()
-    # signatures = db.get_all_signatures()
     db.close()

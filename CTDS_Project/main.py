@@ -9,13 +9,14 @@ if __name__ == "__main__":
 
     file = input('File to test: ')
     test_file = os.path.join(test_path, file)
-    test_sig = Signatures(test_file).getSignatures()
-    db_sigs = db.get_all_signatures()
+    # test_sig = Fingerprint(test_file).getSignatures()
+    # db_sigs = db.get_all_signatures()
 
-    print('Similarity to article:')
-    for name, sig in db_sigs.items():
-        sim = jaccard(test_sig, sig)
-        if sim >= 0.01:
-            print('{:<45}: {:.2f}'.format(name, sim))
+    # print('Similarity to article:')
+    # for name, sig in db_sigs.items():
+    #     sim = jaccard(test_sig, sig)
+    #     if sim >= 0.001:
+    #         print('{:<45}: {:.5f}'.format(name, sim))
+    Fingerprint(test_file).getSubstring()
 
     db.close()
