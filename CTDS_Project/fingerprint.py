@@ -7,6 +7,12 @@ def jaccard(sig1, sig2):
     T = set(sig2)
     return len(S & T) / len(S | T)
 
+def new_jaccard(sig1, sig2):
+    S = set(sig1)
+    T = set(sig2)
+    # print(S & T)
+    return len(S & T) / len(S)
+
 
 class Fingerprint:
     
@@ -33,6 +39,13 @@ class Fingerprint:
         document = [w for w in document if w not in sw]
         shingles = [document[i:i+q] for i in range(len(document)-q)]
         return shingles
+
+    def shingles2(self, q):
+        sw = set(stopwords.words('english'))
+        document = self.filetext
+        document = re.findall(r'\w+[-\w]+[^\W_]+', document)
+        shingles = [document[i:i+q] for i in range(len(document)-q)]
+        return shingles
   
     def minHash(self):
         shingles = self.shingles(self.q)
@@ -43,4 +56,5 @@ class Fingerprint:
         return self.minHash()
 
     def getSubstring(self):
-        shingles = self.shingles(self.q)
+        shingles = self.shingles2(5)
+        return [(s1,s2,s3,s4,s5) for s1,s2,s3,s4,s5 in shingles]
