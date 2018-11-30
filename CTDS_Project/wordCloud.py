@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Nov 29 11:41:42 2018
-
-@author: Andreas Hjort
-"""
-
 from collections import Counter
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
