@@ -13,8 +13,9 @@ from nltk.corpus import stopwords
 
 class wordCloud:
     
-    def __init__(self, filename):
+    def __init__(self, filename, numOfWords = 10):
         self.filename = filename
+        self.numOfWords = numOfWords
         self.filetext = self.loadFile(filename)
         self.makeCloud(self.filetext)
         
@@ -32,7 +33,7 @@ class wordCloud:
         count = Counter(tokens)
         countTF =  Counter({k:float(v)/float(len(fileText)) for k,v in count.items()})
         wordcloud = WordCloud(background_color='white')
-        countTopTen = dict(countTF.most_common(10))
+        countTopTen = dict(countTF.most_common(self.numOfWords))
         wordcloud.generate_from_frequencies(frequencies=countTopTen)
         plt.figure()
         plt.imshow(wordcloud, interpolation="bilinear")
