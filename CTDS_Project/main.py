@@ -1,10 +1,13 @@
 from database import * # pylint: disable=W0614
+from wordCloud import * # pylint: disable=W0614
 import os, sys
 from PyQt5.QtGui import QIcon # pylint: disable=E0611
 from PyQt5.QtCore import pyqtSlot # pylint: disable=E0611
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout # pylint: disable=E0611
 from PyQt5.QtWidgets import QPushButton, QMainWindow, QLineEdit, QLabel # pylint: disable=E0611
 from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QHeaderView # pylint: disable=E0611
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.figure import Figure
 
 path = os.path.dirname(os.path.abspath(__file__))
 wiki_path = os.path.join(path, 'Wikipages')
@@ -75,10 +78,10 @@ class App(QWidget):
             sim = jaccard(test_sig, sig)
             if sim >= 0.001:
                 substring = Fingerprint(os.path.join(wiki_path, name)).getSubstring()
-                real_sim = new_jaccard(test_substring, substring)
+                real_sim = substring_match(test_substring, substring)
                 if real_sim > 0.01:
                     self.table.setRowCount(idx + 1)
-                    self.table.setItem(idx, 0, QTableWidgetItem(name))
+                    self.table.setItem(idx, 0, QTableWidgetItem(name.replace('_', ' ').replace('.txt', '')))
                     self.table.setItem(idx, 1, QTableWidgetItem('{}%'.format(round(real_sim * 100))))
                     idx += 1
         if idx == 0:
@@ -86,8 +89,11 @@ class App(QWidget):
             self.table.setColumnCount(1)
             self.table.setItem(0, 0, QTableWidgetItem('No matches'))
 
-
         db.close()
+
+    @pyqtSlot()
+    def generate_word_cloud(self):
+        pass
 
 
 if __name__ == "__main__":

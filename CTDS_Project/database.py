@@ -2,11 +2,13 @@ import sqlite3 as sql
 import os
 from fingerprint import * # pylint: disable=W0614
 
+path = os.path.dirname(os.path.abspath(__file__))
+os.chdir(path)
 
 class Database:
 
     def __init__(self):
-        self.con = sql.connect('wikipedia.sqlite')
+        self.con = sql.connect('wikipedia2.sqlite')
         # SELECT returns list of single values instead of tuples:
         self.con.row_factory = lambda cursor, row: row[0]
         self.c = self.con.cursor()
