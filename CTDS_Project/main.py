@@ -1,11 +1,13 @@
 from database import * # pylint: disable=W0614
 from wordCloud import * # pylint: disable=W0614
 import os, sys
-from PyQt5.QtGui import QIcon # pylint: disable=E0611
-from PyQt5.QtCore import pyqtSlot # pylint: disable=E0611
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout # pylint: disable=E0611
-from PyQt5.QtWidgets import QPushButton, QMainWindow, QLineEdit, QLabel # pylint: disable=E0611
-from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QHeaderView # pylint: disable=E0611
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QSizePolicy 
+from PyQt5.QtWidgets import QPushButton, QMainWindow, QLineEdit, QLabel 
+from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem, QHeaderView
+import matplotlib
+matplotlib.use('Qt5Agg')
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
@@ -13,6 +15,35 @@ path = os.path.dirname(os.path.abspath(__file__))
 wiki_path = os.path.join(path, 'Wikipages')
 test_path = os.path.join(path, 'TestOpgaver')
 
+
+class PlotCanvas(FigureCanvas):
+ 
+    def __init__(self, parent=None, file='sværhedsgrad2.txt', width=5, height=4, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        FigureCanvas.__init__(self, fig)
+        self.setParent(parent)
+
+        FigureCanvas.setSizePolicy(self, QSizePolicy.Expanding, QSizePolicy.Expanding)
+        FigureCanvas.updateGeometry(self)
+        self.plot(file)
+
+    def plot(self, file):
+        self.ax = self.figure.add_subplot(211)
+        self.ax.axis("off")
+        self.ax.set_title(file)
+        test_file = os.path.join(test_path, file)
+        wc = wordCloud(test_file)
+        cloud = wc.getCloud()
+        self.ax.imshow(cloud, interpolation="bilinear")
+
+        # ax2 = self.figure.add_subplot(212)
+
+    # def update(self, file):
+    #     self.ax.cla()
+    #     test_file = os.path.join(test_path, file)
+    #     wc = wordCloud(test_file)
+    #     cloud = wc.getCloud()
+    #     self.ax.imshow(cloud, interpolation="bilinear")
 
 class App(QWidget):
 
@@ -39,13 +70,14 @@ class App(QWidget):
         
         self.textbox = QLineEdit(self)
         f = self.textbox.font()
-        f.setPointSize(10)
+        f.setPointSize(9)
         self.textbox.setFont(f)
         self.layout.addWidget(self.textbox)
 
         button = QPushButton('Run', self)
         button.setToolTip('Detect if the article contains plagiarism')
         button.clicked.connect(self.on_click)
+        # button.clicked.connect(self.generate_word_cloud)
         self.layout.addWidget(button)
 
         self.table = QTableWidget(self)
@@ -58,6 +90,9 @@ class App(QWidget):
         header.setSectionResizeMode(0, QHeaderView.Stretch)
         header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
         self.layout.addWidget(self.table)
+
+        self.m = PlotCanvas(self)
+        self.layout.addWidget(self.m)
 
         self.setLayout(self.layout)
 
@@ -91,12 +126,25 @@ class App(QWidget):
 
         db.close()
 
+        self.m = PlotCanvas(self, file)
+        self.layout.removeWidget(self.m)
+        # self.layout.addWidget(self.m)
+
+        # Update wordcloud
+        # self.m.update(file)
+        # self.setLayout(self.layout)
+        # self.layout.
+
     @pyqtSlot()
     def generate_word_cloud(self):
-        pass
+        file = self.textbox.text() + '.txt'
+        test_file = os.path.join(test_path, file)
+        WordCloud(test_file)
+    
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = App()
     sys.exit(app.exec_())
+    # wordCloud('TestOpgaver/sværhedsgrad2.txt')

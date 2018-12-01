@@ -1,5 +1,5 @@
 from collections import Counter
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 from nltk.tokenize import RegexpTokenizer
 from nltk.corpus import stopwords 
@@ -10,15 +10,13 @@ class wordCloud:
         self.filename = filename
         self.numOfWords = numOfWords
         self.filetext = self.loadFile(filename)
-        self.makeCloud(self.filetext)
-        
+        self.cloud = self.makeCloud(self.filetext)
     
     def loadFile(self, filename):
         file = open(filename, encoding="utf8")
         return file.read()
     
     def makeCloud(self, fileText):
-        
         stopwordslist = set(stopwords.words('english'))
         tokenizer = RegexpTokenizer(r'\w+')
         token = tokenizer.tokenize(fileText)
@@ -28,7 +26,11 @@ class wordCloud:
         wordcloud = WordCloud(background_color='white')
         countNumOfWords = dict(countTF.most_common(self.numOfWords))
         wordcloud.generate_from_frequencies(frequencies=countNumOfWords)
-        plt.figure()
-        plt.imshow(wordcloud, interpolation="bilinear")
-        plt.axis("off")
-        plt.show()
+        return wordcloud
+        # plt.figure()
+        # plt.imshow(wordcloud, interpolation="bilinear")
+        # plt.axis("off")
+        # plt.show()
+
+    def getCloud(self):
+        return self.cloud
