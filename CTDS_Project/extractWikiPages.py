@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Nov 13 13:29:40 2018
-
-@author: Andreas Hjort
-"""
-
-
 from urllib.request import urlopen
 import json
 import pandas as pd

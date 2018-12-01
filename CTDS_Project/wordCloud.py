@@ -10,7 +10,8 @@ class wordCloud:
         self.filename = filename
         self.numOfWords = numOfWords
         self.filetext = self.loadFile(filename)
-        self.cloud = self.makeCloud(self.filetext)
+        self.cloud = self.makeCloud(self.filetext.lower())
+        
     
     def loadFile(self, filename):
         file = open(filename, encoding="utf8")

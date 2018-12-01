@@ -1,19 +1,23 @@
+# Import packages
 import mmh3
 import re
 from nltk.corpus import stopwords
 
+# Jacard similarity of the two documents
 def jaccard(sig1, sig2):
     S = set(sig1)
     T = set(sig2)
     return len(S & T) / len(S | T)
 
+# Slower but more precise substring match of the found documents using fingerprints.
+# Returns how big of a percentage of the document that has plagiarized form the wiki article.
 def substring_match(sig1, sig2):
     S = set(sig1)
     T = set(sig2)
     # print(S & T)
     return len(S & T) / len(S)
 
-
+# Class for the generation of fingerprints. This is run in the main script on each article, as well as the chosen document to check.
 class Fingerprint:
     
     def __init__(self, filename):
