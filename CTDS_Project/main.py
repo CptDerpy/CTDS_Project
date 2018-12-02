@@ -68,6 +68,8 @@ class App(QWidget):
         self.icon = QIcon(os.path.join(path, 'Wikipedia-icon.png'))
         self.initUI()
         self.find_documents()
+        self.file1 = None
+        self.file2 = None
         self.show()
 
     def initUI(self, left=800, top=500, width=1200, height=600):
@@ -150,22 +152,17 @@ class App(QWidget):
 
     @pyqtSlot()
     def on_click(self):
-        # Reset table and wordclouds
-        self.reset_view()
-
         # Detect potential plagiarised articles
         try:
             test_file = os.path.join(test_path, self.file1)
             self.detect_plagiarism(test_file)
-        except FileNotFoundError and AttributeError:
+        except FileNotFoundError and TypeError:
+            self.table.setRowCount(1)
             self.table.setItem(0, 0, QTableWidgetItem('File not found'))
             return
         
         # Show detected articles on GUI
         self.update_table()
-
-        # Generate wordcloud from input article
-        self.m.plot_top(self.file1, self.int_sel.value())
 
     @pyqtSlot()
     def table_click(self):
@@ -175,8 +172,10 @@ class App(QWidget):
         except FileNotFoundError:
             pass
 
+    # Reset table and wordclouds
     def reset_view(self):
-        self.table.setRowCount(1)
+        self.file2 = None
+        self.table.setRowCount(0)
         self.table.setColumnCount(1)
         self.m.setParent(None)
         self.m = PlotCanvas(self)
@@ -192,10 +191,14 @@ class App(QWidget):
                 self.table.setItem(idx, 1, QTableWidgetItem('{} %'.format(round(sim * 100))))
                 self.table.item(idx, 1).setTextAlignment(Qt.AlignRight|Qt.AlignVCenter)
         else:
+            self.table.setRowCount(1)
             self.table.setItem(0, 0, QTableWidgetItem('No matches'))
 
     def update_wordclouds(self):
-        print('It works')
+        if self.file1:
+            self.m.plot_top(self.file1, self.int_sel.value())
+        if self.file2:
+            self.m.plot_btm(self.file2, self.int_sel.value())
 
     def find_documents(self):
         files = [f for f in os.listdir(test_path) if '.txt' in f]
@@ -204,7 +207,10 @@ class App(QWidget):
             self.doc_table.setItem(idx, 0, QTableWidgetItem(file))
 
     def select_doc(self):
+        self.reset_view()
         self.file1 = self.doc_table.currentItem().text()
+        # Generate wordcloud from input article
+        self.m.plot_top(self.file1, self.int_sel.value())
 
     def detect_plagiarism(self, file):
         # Create fingerprint of input file
