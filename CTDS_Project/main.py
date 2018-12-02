@@ -1,7 +1,7 @@
 import os, sys
 
-from database import * # pylint: disable=W0614
-from wordCloud import * # pylint: disable=W0614
+from database import *
+from wordCloud import *
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot, Qt
@@ -38,18 +38,20 @@ class PlotCanvas(FigureCanvas):
 
     def plot_top(self, file):
         test_file = os.path.join(test_path, file)
-        wc = wordCloud(test_file)
+        wc = WordCloud(test_file)
         cloud = wc.getCloud()
         self.top_plt.imshow(cloud, interpolation="bilinear")
+        self.draw()
 
     def plot_btm(self, file):
         test_file = os.path.join(wiki_path, file.replace(' ', '_') + '.txt')
-        wc = wordCloud(test_file)
+        wc = WordCloud(test_file)
         cloud = wc.getCloud()
         self.btm_plt.set_title(file)
         self.btm_plt.imshow(cloud, interpolation="bilinear")
+        self.draw()
 
-
+# TODO: Select number of words in wordcloud and show a list of available input documents
 # Main application window
 class App(QWidget):
 
@@ -78,7 +80,7 @@ class App(QWidget):
         self.v_layout = QVBoxLayout()
 
         # Text label
-        label = QLabel('Input article:')
+        label = QLabel('Input document:')
         self.v_layout.addWidget(label)
         
         # Input box
@@ -89,8 +91,8 @@ class App(QWidget):
         self.v_layout.addWidget(self.textbox)
 
         # Detect plagiarism button
-        button = QPushButton('Run', self)
-        button.setToolTip('Detect if the article contains plagiarism')
+        button = QPushButton('Detect plagiarism', self)
+        button.setToolTip('Detect if the article contains plagiarism from Wikipedia')
         button.clicked.connect(self.on_click)
         self.v_layout.addWidget(button)
 
@@ -119,9 +121,9 @@ class App(QWidget):
         self.reset_view()
 
         # Detect potential plagiarised articles
-        file = self.textbox.text() + '.txt'
-        test_file = os.path.join(test_path, file)
         try:
+            file = self.textbox.text() + '.txt'
+            test_file = os.path.join(test_path, file)
             self.detect_plagiarism(test_file)
         except FileNotFoundError:
             self.table.setItem(0, 0, QTableWidgetItem('File not found'))
@@ -132,14 +134,12 @@ class App(QWidget):
 
         # Generate wordcloud from input article
         self.m.plot_top(file)
-        self.m.draw()
 
     @pyqtSlot()
     def table_click(self):
         try:
             file = self.table.currentItem().text()
             self.m.plot_btm(file)
-            self.m.draw()
         except FileNotFoundError:
             pass
 

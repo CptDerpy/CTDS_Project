@@ -9,7 +9,7 @@ class Database:
 
     def __init__(self):
         self.con = sql.connect('wikipedia.sqlite')
-        # SELECT returns list of single values instead of tuples:
+        # fetchall returns list of single values instead of tuples:
         self.con.row_factory = lambda cursor, row: row[0]
         self.c = self.con.cursor()
         self.create_table()
